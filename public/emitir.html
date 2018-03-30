@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Video</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <video src="" id="video" style="width: 600px;height: 400px;" autoplay="autoplay"></video>
+        <canvas id="preview" style="display: none;"></canvas>
+        <div id="logger"></div>
+        <script type="text/javascript">
+            
+           var canvas = document.getElementById('preview');
+           var context = canvas.getContext("2d");
+           canvas.width = 600;
+           canvas.height = 400;
+           context.width = canvas.width;
+           context.height = canvas.height;
+           var video = document.getElementById("video");
+           var socket = io();
+           function logger(msj){
+               $('#logger').text(msj);
+           }
+           function loadCam(stream){
+               video.src = window.URL.createObjectURL(stream);
+               logger('Camara OK');
+           }
+           function loadFail(){
+               logger('Camara Error!');
+           }
+           function viewVideo(video,context){
+               context.drawImage(video,0,0,context.width,context.height);
+               socket.emit('stream',canvas.toDataURL('image/webp'));
+           }
+           $(function(){
+               navigator.getUserMedia = (navigator.getUserMedia || 
+                       navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msgGetUsarMedia);
+               if(navigator.getUserMedia){
+                   navigator.getUserMedia({video : true},loadCam,loadFail);
+               }
+               setInterval(function(){
+                   viewVideo(video,context);
+               },70);
+               
+           });
+           
+        </script>
+    </body>
+</html>
