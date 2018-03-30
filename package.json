@@ -14,5 +14,9 @@
         "socket.io": "*",
         "express": "*",
         "log": "*"
-    }
+    },
+    "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
